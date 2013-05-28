@@ -81,7 +81,7 @@ public class Dress {
 
 
 
-	private static Random random = new  Random();
+	private static Random random = new  Random(System.nanoTime());
 	public static Dress generateRandom() {
 		List<Integer> features = new ArrayList<Integer>();
 		
