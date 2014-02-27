@@ -7,7 +7,7 @@ import java.util.Random;
 
 import com.johnhite.hash.Feature.Bust;
 
-public class Dress {
+public class Dress implements Hashable<BitSet> {
 	private final BitSet features = new BitSet();
 	private final String name;
 	
@@ -23,18 +23,21 @@ public class Dress {
 		return name;
 	}
 	
-	public String getFeatures() {
+	public String printFeatures() {
 		StringBuilder sb = new StringBuilder();
 		int nextSet = features.nextSetBit(0);
 		while(nextSet >= 0) {
-			sb.append(Feature.getByIndex(nextSet).description());
-			sb.append(", ");
+			if (nextSet < 34) {
+				sb.append(Feature.getByIndex(nextSet).description());
+				sb.append(", ");
+			}
 			nextSet = features.nextSetBit(nextSet+1);
 		}
 		return sb.toString();
 	}
 	
-	public BitSet getFeatureBitSet() {
+	@Override
+	public BitSet getFeatures() {
 		return features;
 	}
 	
@@ -43,7 +46,7 @@ public class Dress {
 		StringBuilder sb = new StringBuilder();
 		sb.append(name);
 		sb.append(" - ");
-		sb.append(getFeatures());
+		sb.append(printFeatures());
 		return sb.toString();
 	}
 
@@ -83,6 +86,10 @@ public class Dress {
 
 	private static Random random = new  Random(System.nanoTime());
 	public static Dress generateRandom() {
+		return generateRandom(34);
+	}
+	
+	public static Dress generateRandom(int numberRandomFeatures) {
 		List<Integer> features = new ArrayList<Integer>();
 		
 		Bust[] bustSizes = Feature.Bust.values();
@@ -118,6 +125,13 @@ public class Dress {
 		Feature.Length[] lengthSizes = Feature.Length.values();
 		index = random.nextInt(lengthSizes.length);
 		features.add(lengthSizes[index].index());
+		
+		int featuresToGenerate = numberRandomFeatures - 34;
+		if (featuresToGenerate > 0) {
+			for (int i=0; i < featuresToGenerate; i++) {
+				features.add(random.nextInt(featuresToGenerate) + 34);
+			}
+		}
 		
 		return new Dress("Dress " + random.nextInt(Integer.MAX_VALUE), features);
 	}
